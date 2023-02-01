@@ -84,7 +84,7 @@ class Order(BaseModel):
 class OrderItem(BaseModel):
     quantity = models.IntegerField()
     price = models.FloatField()
-
+    image = models.ImageField(upload_to="OrderItems/", blank=True, null=True)
     menu = models.ForeignKey(Menu, on_delete=models.PROTECT)
     order = models.ForeignKey(
         Order, related_name="order_items", on_delete=models.CASCADE
