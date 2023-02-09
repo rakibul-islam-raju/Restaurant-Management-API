@@ -25,6 +25,12 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CategoryCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ["name", "slug"]
+
+
 class MenuCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Menu

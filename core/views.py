@@ -15,6 +15,7 @@ from core.serializers import (
     CampaignSerializer,
     ContactSerializer,
     CategorySerializer,
+    CategoryCreateSerializer,
     OrderDetailSerializer,
     OrderItemSerializer,
     OrderSerializer,
@@ -37,16 +38,17 @@ from core.models import (
 
 
 class CategoryListCreateView(ListCreateAPIView):
-    serializer_class = CategorySerializer
-
     def get_queryset(self):
         if self.request.user.is_staff:
             return Category.objects.all()
         else:
             return Category.objects.filter(is_active=True)
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return CategoryCreateSerializer
+        else:
+            return CategorySerializer
 
     def get_permissions(self):
         if self.request.method == "GET":
