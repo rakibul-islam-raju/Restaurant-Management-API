@@ -107,6 +107,8 @@ class ContactSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
     class Meta:
         model = Order
         fields = "__all__"
@@ -132,6 +134,6 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         return serilizer.data
 
     def get_user(self, obj):
-        user = obj.added_by
+        user = obj.user
         serilizer = UserSerializer(user, many=False)
         return serilizer.data

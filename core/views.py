@@ -91,9 +91,6 @@ class MenuListCreateView(ListCreateAPIView):
         else:
             return queryset.filter(is_active=True)
 
-    def perform_create(self, serializer):
-        serializer.save(added_by=self.request.user)
-
     def get_serializer_class(self):
         if self.request.method == "POST":
             return MenuCreateSerializer
@@ -116,6 +113,12 @@ class MenuDetailView(RetrieveUpdateDestroyAPIView):
             return Menu.objects.all()
         else:
             return Menu.objects.filter(is_active=True)
+
+    def get_serializer_class(self):
+        if self.request.method == "PUT" or self.request.method == "PATCH":
+            return MenuCreateSerializer
+        else:
+            return MenuSerializer
 
     def get_permissions(self):
         if self.request.method == "GET":
@@ -142,7 +145,7 @@ class OrderListCreateView(ListCreateAPIView):
         else:
             self.permission_classes = [IsAuthenticated]
 
-        return super(CampaignListCreateView, self).get_permissions()
+        return super(OrderListCreateView, self).get_permissions()
 
     def post(self, request, *args, **kwargs):
         user = request.user

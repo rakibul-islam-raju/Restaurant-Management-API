@@ -84,8 +84,9 @@ class Order(BaseModel):
 class OrderItem(BaseModel):
     quantity = models.IntegerField()
     price = models.FloatField()
+    name = models.CharField(max_length=100)
     image = models.ImageField(upload_to="OrderItems/", blank=True, null=True)
-    menu = models.ForeignKey(Menu, on_delete=models.PROTECT)
+    menu = models.ForeignKey(Menu, on_delete=models.SET_NULL, null=True)
     order = models.ForeignKey(
         Order, related_name="order_items", on_delete=models.CASCADE
     )
@@ -94,7 +95,7 @@ class OrderItem(BaseModel):
         ordering = ["-id"]
 
     def __str__(self):
-        return self.menu.title
+        return self.menu.name
 
 
 class Resarvation(BaseModel):
