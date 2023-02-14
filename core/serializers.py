@@ -43,6 +43,7 @@ class MenuCreateSerializer(serializers.ModelSerializer):
             "description",
             "cook_time",
             "offer_price",
+            "is_active",
         ]
 
 
@@ -95,6 +96,8 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
 
 
 class ResarvationSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
     class Meta:
         model = Resarvation
         fields = "__all__"

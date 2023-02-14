@@ -106,6 +106,7 @@ class Resarvation(BaseModel):
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
+    date = models.DateField()
     time = models.CharField(max_length=100)
     person = models.IntegerField(
         default=2,
@@ -118,7 +119,7 @@ class Resarvation(BaseModel):
         ordering = ["-id"]
 
     def __str__(self):
-        return self.email
+        return self.user.email
 
 
 class Review(BaseModel):
