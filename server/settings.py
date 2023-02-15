@@ -32,6 +32,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "restaurant-management.studyservice.co.uk",
     "restaurant-management-api-production.up.railway.app",
+    "https://restaurant-management-api-production.up.railway.app",
 ]
 
 
