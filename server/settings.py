@@ -177,3 +177,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://restaurant-management-app.vercel.app",
     "https://admin-restaurant-management.vercel.app",
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://restaurant-management-api-production.up.railway.app",
+    "restaurant-management-api-production.up.railway.app",
+]
