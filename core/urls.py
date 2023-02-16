@@ -33,7 +33,7 @@ urlpatterns = [
     path("orders/<pk>", OrderDetailView.as_view(), name="order-details"),
     # campaigns
     path("campaigns", CampaignListCreateView.as_view(), name="campaigns"),
-    path("campaigns/<int>", CampaignDetailView.as_view(), name="campaign-details"),
+    path("campaigns/<pk>", CampaignDetailView.as_view(), name="campaign-details"),
     # contact
     path("contacts", ContactListCreateView.as_view(), name="contacts"),
     path("contacts/<pk>", ContactDetailView.as_view(), name="contact-details"),

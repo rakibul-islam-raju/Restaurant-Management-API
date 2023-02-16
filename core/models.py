@@ -18,13 +18,14 @@ class Campaign(BaseModel):
     title = models.CharField(max_length=200)
     description = models.TextField()
     image = models.ImageField(upload_to="campaign/")
+    start_date = models.DateField()
     end_date = models.DateField()
 
     class Meta:
         ordering = ["-id"]
 
     def __str__(self):
-        return self.name
+        return self.title
 
 
 class Category(BaseModel):

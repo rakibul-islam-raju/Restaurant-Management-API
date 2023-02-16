@@ -211,7 +211,7 @@ class CampaignListCreateView(ListCreateAPIView):
 
 
 class CampaignDetailView(RetrieveUpdateDestroyAPIView):
-    serializer_class = CategorySerializer
+    serializer_class = CampaignSerializer
     queryset = Campaign.objects.all()
     permission_classes = [IsAdminUser]
 
