@@ -2,6 +2,7 @@ from decimal import Decimal
 from django.db.models import Q
 from django.db.models import Avg
 from rest_framework import status
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.generics import (
@@ -17,7 +18,6 @@ from core.serializers import (
     CategorySerializer,
     CategoryCreateSerializer,
     OrderDetailSerializer,
-    OrderItemSerializer,
     OrderSerializer,
     MenuSerializer,
     MenuCreateSerializer,
@@ -35,6 +35,26 @@ from core.models import (
     Resarvation,
     Review,
 )
+from accounts.models import User
+
+
+class SummaryStatistics(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request, format=None):
+        pending_orders = Order.objects.filter(is_served=False).count()
+        registered_users = User.objects.filter(is_staff=False).count()
+        pending_reservations = Resarvation.objects.filter(status="pending").count()
+        runnig_campaigns = Campaign.objects.filter(is_active=True).count()
+
+        results = {
+            "pending_orders": pending_orders,
+            "registered_users": registered_users,
+            "pending_reservations": pending_reservations,
+            "runnig_campaigns": runnig_campaigns,
+        }
+
+        return Response({"results": results})
 
 
 class CategoryListCreateView(ListCreateAPIView):

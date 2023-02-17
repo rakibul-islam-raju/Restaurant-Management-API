@@ -1,6 +1,7 @@
 from django.urls import path
 
 from core.views import (
+    SummaryStatistics,
     CategoryListCreateView,
     CategoryDetailView,
     MenuListCreateView,
@@ -21,6 +22,8 @@ from core.views import (
 app_name = "core"
 
 urlpatterns = [
+    # stats
+    path("statistics/summary", SummaryStatistics.as_view(), name="statistics-summary"),
     # categories
     path("categories", CategoryListCreateView.as_view(), name="categories"),
     path("categories/<pk>", CategoryDetailView.as_view(), name="category-details"),
