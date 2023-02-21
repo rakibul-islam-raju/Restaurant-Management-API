@@ -29,8 +29,8 @@ urlpatterns = [
     path("categories/<pk>", CategoryDetailView.as_view(), name="category-details"),
     # menus
     path("menus", MenuListCreateView.as_view(), name="categories"),
-    path("menus/<pk>", MenuDetailView.as_view(), name="menu-details"),
     path("menus/top-rated", TopRatedMenus.as_view(), name="menu-top-rated"),
+    path("menus/<pk>", MenuDetailView.as_view(), name="menu-details"),
     # orders
     path("orders", OrderListCreateView.as_view(), name="orders"),
     path("orders/<pk>", OrderDetailView.as_view(), name="order-details"),

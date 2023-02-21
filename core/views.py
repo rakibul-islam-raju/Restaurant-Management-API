@@ -87,29 +87,24 @@ class CategoryDetailView(RetrieveUpdateDestroyAPIView):
 
 class TopRatedMenus(ListAPIView):
     serializer_class = MenuSerializer
-    permission_classes = [AllowAny]
 
     def get_queryset(self):
         return (
             Menu.objects.filter(is_active=True)
             .distinct()
             .annotate(avg_rating=Avg("review__rating"))
-            .order_by("-avg_rating")[0:4]
+            .order_by("-avg_rating")[0:6]
         )
 
 
 class MenuListCreateView(ListCreateAPIView):
-    def get_queryset(self):
-        keyword = self.request.GET.get("keyword")
-        if keyword:
-            queryset = Menu.objects.filter(Q(name__icontains=keyword))
-        else:
-            queryset = Menu.objects.all()
+    filterset_fields = ["category"]
 
+    def get_queryset(self):
         if self.request.user.is_staff:
-            return queryset
+            return Menu.objects.all()
         else:
-            return queryset.filter(is_active=True)
+            return Menu.objects.filter(is_active=True)
 
     def get_serializer_class(self):
         if self.request.method == "POST":
@@ -152,6 +147,7 @@ class MenuDetailView(RetrieveUpdateDestroyAPIView):
 class OrderListCreateView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = OrderSerializer
+    filterset_fields = ["is_active", "is_paid", "is_served", "user__email"]
 
     def get_queryset(self):
         if self.request.user.is_staff:
