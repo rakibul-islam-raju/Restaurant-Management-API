@@ -18,6 +18,7 @@ from core.serializers import (
     CategorySerializer,
     CategoryCreateSerializer,
     OrderDetailSerializer,
+    OrderCreateSerializer,
     OrderSerializer,
     MenuSerializer,
     MenuCreateSerializer,
@@ -36,6 +37,7 @@ from core.models import (
     Review,
 )
 from accounts.models import User
+from accounts.serializers import UserSerializer
 
 
 class SummaryStatistics(APIView):
@@ -173,7 +175,7 @@ class OrderListCreateView(ListCreateAPIView):
                 {"detail": "No Order Items"}, status=status.HTTP_400_BAD_REQUEST
             )
         else:
-            order_serializer = OrderSerializer(
+            order_serializer = OrderCreateSerializer(
                 data={
                     "user": user.pk,
                     "tax": data.get("tax"),
@@ -185,7 +187,7 @@ class OrderListCreateView(ListCreateAPIView):
 
             # create order items and add to order
             for i in order_items:
-                menu = Menu.objects.get(id=i["menu"])
+                menu = Menu.objects.get(id=i["id"])
                 item = OrderItem(
                     menu=menu,
                     order=order,
