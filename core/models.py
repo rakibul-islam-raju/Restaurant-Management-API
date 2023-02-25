@@ -107,14 +107,17 @@ class Resarvation(BaseModel):
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=11)
     date = models.DateField()
-    time = models.CharField(max_length=100)
+    time = models.TimeField()
     person = models.IntegerField(
         default=2,
         validators=[MaxValueValidator(12)],
         help_text="Maximum 12 person reservation allowed.",
     )
-    status = models.CharField(choices=RESERVATION_STATUS, max_length=10)
+    status = models.CharField(
+        choices=RESERVATION_STATUS, default="pending", max_length=10
+    )
 
     class Meta:
         ordering = ["-id"]

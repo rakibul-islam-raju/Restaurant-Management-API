@@ -95,6 +95,18 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         return data
 
 
+class ResarvationCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Resarvation
+        fields = [
+            "name",
+            "phone",
+            "date",
+            "time",
+            "person",
+        ]
+
+
 class ResarvationSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 

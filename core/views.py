@@ -22,6 +22,7 @@ from core.serializers import (
     OrderSerializer,
     MenuSerializer,
     MenuCreateSerializer,
+    ResarvationCreateSerializer,
     ResarvationSerializer,
     ReviewSerializer,
     ReviewCreateSerializer,
@@ -187,13 +188,18 @@ class OrderListCreateView(ListCreateAPIView):
 
             # create order items and add to order
             for i in order_items:
+                price = 0
+                if i["offer_price"]:
+                    price = i["offer_price"]
+                else:
+                    price = i["price"]
                 menu = Menu.objects.get(id=i["id"])
                 item = OrderItem(
                     menu=menu,
                     order=order,
                     name=menu.name,
                     quantity=int(i["quantity"]),
-                    price=Decimal(i["price"]),
+                    price=Decimal(price),
                     image=menu.image,
                 )
                 item.save()
@@ -254,8 +260,17 @@ class ContactDetailView(RetrieveUpdateDestroyAPIView):
 
 
 class ResarvationListCreateView(ListCreateAPIView):
-    serializer_class = ResarvationSerializer
     queryset = Resarvation.objects.all()
+    filterset_fields = ["is_active", "user__email"]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return ResarvationCreateSerializer
+        else:
+            return ResarvationSerializer
 
     def get_permissions(self):
         if self.request.method == "POST":
