@@ -65,11 +65,14 @@ class MenuSerializer(serializers.ModelSerializer):
             "is_active",
             "created_at",
             "updated_at",
+            "total_reviews",
+            "rating",
         ]
 
 
 class ReviewSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+    menu = MenuSerializer()
 
     class Meta:
         model = Review
@@ -91,6 +94,14 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         ).exists()
         if not order_items:
             raise serializers.ValidationError("You must order this menu to review.")
+
+        # check if user already reviewd once
+        already_reviewed = Review.objects.filter(
+            menu=data["menu"],
+            user=self.context["request"].user,
+        ).exists()
+        if already_reviewed:
+            raise serializers.ValidationError("You can review one item only once.")
 
         return data
 

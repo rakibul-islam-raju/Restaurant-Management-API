@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Avg
 from django.core.validators import MaxValueValidator
 from django.utils.text import slugify
 
@@ -65,6 +66,14 @@ class Menu(BaseModel):
         if not self.slug:
             self.slug = slugify(self.name)
         return super().save(*args, **kwargs)
+
+    @property
+    def total_reviews(self):
+        return self.review_set.all().count()
+
+    @property
+    def rating(self):
+        return self.review_set.all().aggregate(Avg("rating"))
 
 
 class Order(BaseModel):
@@ -136,7 +145,7 @@ class Review(BaseModel):
         ordering = ["-id"]
 
     def __str__(self):
-        return self.product.name
+        return self.menu.name
 
 
 class Contact(models.Model):

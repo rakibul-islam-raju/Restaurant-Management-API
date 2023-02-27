@@ -1,9 +1,10 @@
 from decimal import Decimal
-from django.db.models import Q
 from django.db.models import Avg
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.generics import (
     ListAPIView,
@@ -42,19 +43,23 @@ from accounts.serializers import UserSerializer
 
 
 class SummaryStatistics(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
 
     def get(self, request, format=None):
         pending_orders = Order.objects.filter(is_served=False).count()
         registered_users = User.objects.filter(is_staff=False).count()
+        staffs = User.objects.filter(is_staff=True).count()
         pending_reservations = Resarvation.objects.filter(status="pending").count()
         runnig_campaigns = Campaign.objects.filter(is_active=True).count()
+        menus = Menu.objects.filter(is_active=True).count()
 
         results = {
             "pending_orders": pending_orders,
             "registered_users": registered_users,
             "pending_reservations": pending_reservations,
             "runnig_campaigns": runnig_campaigns,
+            "menus": menus,
+            "staffs": staffs,
         }
 
         return Response({"results": results})
@@ -289,6 +294,12 @@ class ResarvationDetailView(RetrieveUpdateDestroyAPIView):
 
 class ReviewListCreateView(ListCreateAPIView):
     queryset = Review.objects.all()
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ["user__email"]
+    ordering_fields = ["rating", "created_at"]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def get_serializer_class(self):
         if self.request.method == "POST":
