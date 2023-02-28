@@ -68,6 +68,13 @@ class Menu(BaseModel):
         return super().save(*args, **kwargs)
 
     @property
+    def current_price(self):
+        if self.offer_price > 0:
+            return self.offer_price
+        else:
+            return self.price
+
+    @property
     def total_reviews(self):
         return self.review_set.all().count()
 
@@ -161,3 +168,15 @@ class Contact(models.Model):
 
     def __str__(self):
         return self.email
+
+
+class Chef(BaseModel):
+    name = models.CharField(max_length=100)
+    image = models.ImageField(upload_to="chefs/")
+    short_description = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ["-id"]
+
+    def __str__(self):
+        return self.name

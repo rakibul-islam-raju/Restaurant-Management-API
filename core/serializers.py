@@ -10,6 +10,7 @@ from core.models import (
     Contact,
     Resarvation,
     Review,
+    Chef,
 )
 
 
@@ -169,3 +170,9 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         user = obj.user
         serilizer = UserSerializer(user, many=False)
         return serilizer.data
+
+
+class ChefSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chef
+        fields = "__all__"

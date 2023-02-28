@@ -1,5 +1,5 @@
 from decimal import Decimal
-from django.db.models import Avg
+from django.db.models import Case, When, F, FloatField, Avg
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -27,6 +27,7 @@ from core.serializers import (
     ResarvationSerializer,
     ReviewSerializer,
     ReviewCreateSerializer,
+    ChefSerializer,
 )
 from core.models import (
     Category,
@@ -37,6 +38,7 @@ from core.models import (
     Contact,
     Resarvation,
     Review,
+    Chef,
 )
 from accounts.models import User
 from accounts.serializers import UserSerializer
@@ -106,13 +108,54 @@ class TopRatedMenus(ListAPIView):
 
 
 class MenuListCreateView(ListCreateAPIView):
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ["category"]
+    ordering_fields = ["cook_time"]
 
     def get_queryset(self):
+        queryset = Menu.objects.filter(is_active=True)
+
         if self.request.user.is_staff:
-            return Menu.objects.all()
+            queryset = Menu.objects.all()
+
+        # order_by price/offer_price and avarage rating
+        ordering = self.request.query_params.get("ordering", "-avg_rating")
+        if ordering.startswith("-avg_rating"):
+            queryset = queryset.annotate(avg_rating=Avg("review__rating")).order_by(
+                ordering
+            )
+        elif ordering.startswith("avg_rating"):
+            queryset = queryset.annotate(avg_rating=Avg("review__rating")).order_by(
+                ordering
+            )
+        elif ordering.startswith("price"):
+            queryset = queryset.annotate(
+                final_price=Case(
+                    When(
+                        offer_price__isnull=False,
+                        offer_price__gt=0,
+                        then=F("offer_price"),
+                    ),
+                    default=F("price"),
+                    output_field=FloatField(),
+                )
+            ).order_by(ordering)
+        elif ordering.startswith("-price"):
+            queryset = queryset.annotate(
+                final_price=Case(
+                    When(
+                        offer_price__isnull=False,
+                        offer_price__gt=0,
+                        then=F("offer_price"),
+                    ),
+                    default=F("price"),
+                    output_field=FloatField(),
+                )
+            ).order_by("-final_price")
         else:
-            return Menu.objects.filter(is_active=True)
+            queryset = queryset.order_by("-created_at")
+
+        return queryset
 
     def get_serializer_class(self):
         if self.request.method == "POST":
@@ -320,3 +363,29 @@ class ReviewDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = ReviewSerializer
     queryset = Resarvation.objects.all()
     permission_classes = [IsOwner]
+
+
+class ChefListCreateView(ListCreateAPIView):
+    serializer_class = ChefSerializer
+
+    def get_queryset(self):
+        queryset = Chef.objects.all()
+
+        if not self.request.user.is_staff:
+            return queryset.filter(is_active=True)
+
+        return queryset
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            self.permission_classes = [IsAdminUser]
+        else:
+            self.permission_classes = [AllowAny]
+
+        return super(ReviewListCreateView, self).get_permissions()
+
+
+class ChefDetailView(RetrieveUpdateDestroyAPIView):
+    serializer_class = ChefSerializer
+    queryset = Chef.objects.all()
+    permission_classes = [IsAdminUser]
