@@ -368,6 +368,9 @@ class ReviewDetailView(RetrieveUpdateDestroyAPIView):
 class ChefListCreateView(ListCreateAPIView):
     serializer_class = ChefSerializer
 
+    def perform_create(self, serializer):
+        serializer.save(is_active=True)
+
     def get_queryset(self):
         queryset = Chef.objects.all()
 
@@ -382,7 +385,7 @@ class ChefListCreateView(ListCreateAPIView):
         else:
             self.permission_classes = [AllowAny]
 
-        return super(ReviewListCreateView, self).get_permissions()
+        return super(ChefListCreateView, self).get_permissions()
 
 
 class ChefDetailView(RetrieveUpdateDestroyAPIView):
