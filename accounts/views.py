@@ -16,7 +16,7 @@ from rest_framework.generics import (
 
 from accounts.models import User
 from accounts.serializers import (
-    TokenSerializer,
+    MyTokenObtainPairSerializer,
     UserRegistrationSerializer,
     UserSerilizerWithToken,
     UserSerializer,
@@ -26,12 +26,12 @@ from accounts.serializers import (
 )
 from accounts.permissions import IsSuperAdmin
 
-from core.permissions import IsOwner
+from core.permissions import IsOwner, IsMeOwner
 
 
 class LoginView(TokenObtainPairView):
     permission_classes = [AllowAny]
-    serializer_class = TokenSerializer
+    serializer_class = MyTokenObtainPairSerializer
 
 
 class UserRegistrationView(CreateAPIView):
@@ -65,9 +65,11 @@ class UserDetailView(RetrieveUpdateDestroyAPIView):
             return UserSerializer
 
 
-class ProfileEditView(RetrieveUpdateAPIView):
-    permission_classes = [IsOwner]
+class MeView(RetrieveUpdateAPIView):
+    permission_classes = [IsMeOwner]
     queryset = User.objects.all()
+    lookup_field = "email"
+    lookup_url_kwarg = "email"
 
     def get_serializer_class(self):
         if self.request.method == "PUT" or self.request.method == "PATCH":
@@ -77,7 +79,7 @@ class ProfileEditView(RetrieveUpdateAPIView):
 
 
 class ChangePasswordAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsMeOwner]
 
     def post(self, request):
         serializer = ChangePasswordSerializer(data=request.data)

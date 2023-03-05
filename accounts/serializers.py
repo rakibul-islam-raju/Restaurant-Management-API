@@ -8,7 +8,7 @@ from accounts.models import User
 
 
 # Token serializer
-class TokenSerializer(TokenObtainPairSerializer):
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
@@ -32,6 +32,8 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "email",
+            "image",
+            "full_name",
             "is_active",
             "is_staff",
             "is_superuser",
@@ -70,18 +72,17 @@ class UserSerilizerWithToken(UserSerializer):
         }
 
     def get_token(self, obj):
-        token = RefreshToken.for_user(obj)
-        return str(token.access_token)
+        refresh = RefreshToken.for_user(obj)
+        return {
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+        }
 
 
 class UserEditSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = [
-            "first_name",
-            "last_name",
-            "email",
-        ]
+        fields = ["first_name", "last_name", "email", "image"]
 
 
 class SuperUserEditSerializer(serializers.ModelSerializer):
@@ -91,9 +92,5 @@ class SuperUserEditSerializer(serializers.ModelSerializer):
 
 
 class ChangePasswordSerializer(serializers.Serializer):
-    """
-    Serializer for changing password.
-    """
-
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
