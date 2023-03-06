@@ -11,6 +11,7 @@ from core.models import (
     Resarvation,
     Review,
     Chef,
+    EmailSubscription,
 )
 
 
@@ -175,4 +176,10 @@ class OrderDetailSerializer(serializers.ModelSerializer):
 class ChefSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chef
+        fields = "__all__"
+
+
+class EmailSubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmailSubscription
         fields = "__all__"

@@ -28,6 +28,7 @@ from core.serializers import (
     ReviewSerializer,
     ReviewCreateSerializer,
     ChefSerializer,
+    EmailSubscriptionSerializer,
 )
 from core.models import (
     Category,
@@ -39,6 +40,7 @@ from core.models import (
     Resarvation,
     Review,
     Chef,
+    EmailSubscription,
 )
 from accounts.models import User
 from accounts.serializers import UserSerializer
@@ -391,4 +393,23 @@ class ChefListCreateView(ListCreateAPIView):
 class ChefDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = ChefSerializer
     queryset = Chef.objects.all()
+    permission_classes = [IsAdminUser]
+
+
+class SubscribtionListCreateView(ListCreateAPIView):
+    serializer_class = EmailSubscriptionSerializer
+    queryset = EmailSubscription.objects.all()
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            self.permission_classes = [AllowAny]
+        else:
+            self.permission_classes = [IsAdminUser]
+
+        return super(SubscribtionListCreateView, self).get_permissions()
+
+
+class SubscribtionDetailView(RetrieveUpdateDestroyAPIView):
+    serializer_class = EmailSubscriptionSerializer
+    queryset = EmailSubscription.objects.all()
     permission_classes = [IsAdminUser]

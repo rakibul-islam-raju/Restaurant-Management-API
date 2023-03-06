@@ -19,6 +19,8 @@ from core.views import (
     ReviewDetailView,
     ChefListCreateView,
     ChefDetailView,
+    SubscribtionListCreateView,
+    SubscribtionDetailView,
 )
 
 app_name = "core"
@@ -53,4 +55,7 @@ urlpatterns = [
     # chefs
     path("chefs", ChefListCreateView.as_view(), name="chefs"),
     path("chefs/<pk>", ChefDetailView.as_view(), name="chefs-details"),
+    # email subscribtions
+    path("subscribe", SubscribtionListCreateView.as_view(), name="subscribe"),
+    path("subscribe/<pk>", SubscribtionDetailView.as_view(), name="subscribe-details"),
 ]
