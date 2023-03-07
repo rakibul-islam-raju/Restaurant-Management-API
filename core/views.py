@@ -3,7 +3,7 @@ from django.db.models import Case, When, F, FloatField, Avg
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.generics import (
@@ -399,6 +399,8 @@ class ChefDetailView(RetrieveUpdateDestroyAPIView):
 class SubscribtionListCreateView(ListCreateAPIView):
     serializer_class = EmailSubscriptionSerializer
     queryset = EmailSubscription.objects.all()
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ["=email"]
 
     def get_permissions(self):
         if self.request.method == "POST":

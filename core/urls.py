@@ -56,6 +56,8 @@ urlpatterns = [
     path("chefs", ChefListCreateView.as_view(), name="chefs"),
     path("chefs/<pk>", ChefDetailView.as_view(), name="chefs-details"),
     # email subscribtions
-    path("subscribe", SubscribtionListCreateView.as_view(), name="subscribe"),
-    path("subscribe/<pk>", SubscribtionDetailView.as_view(), name="subscribe-details"),
+    path("subscribers", SubscribtionListCreateView.as_view(), name="subscribe"),
+    path(
+        "subscribers/<pk>", SubscribtionDetailView.as_view(), name="subscribe-details"
+    ),
 ]
