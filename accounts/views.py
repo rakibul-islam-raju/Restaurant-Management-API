@@ -1,4 +1,5 @@
 from rest_framework.filters import SearchFilter
+from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
@@ -76,6 +77,30 @@ class MeView(RetrieveUpdateAPIView):
             return UserEditSerializer
         else:
             return UserSerializer
+
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        user = self.get_object()
+
+        # Generate new tokens
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
+
+        # Add custom claims to access token
+        access["email"] = user.email
+        access["first_name"] = user.first_name
+        access["last_name"] = user.last_name
+        access["is_active"] = user.last_name
+        access["is_staff"] = user.is_staff
+        access["is_superuser"] = user.is_superuser
+
+        return Response(
+            {
+                "access": str(access),
+                "refresh": str(refresh),
+                "user": UserSerializer(user).data,
+            }
+        )
 
 
 class ChangePasswordAPIView(APIView):
