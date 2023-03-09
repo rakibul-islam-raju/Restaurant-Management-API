@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Avg
+from django.utils import timezone
 from django.core.validators import MaxValueValidator
 from django.utils.text import slugify
 
@@ -84,12 +85,29 @@ class Menu(BaseModel):
 
 
 class Order(BaseModel):
+    order_id = models.CharField(
+        max_length=100,
+        unique=True,
+        editable=False,
+        blank=True,
+        null=False,
+        db_index=True,
+    )
     total_price = models.FloatField()
     tax = models.FloatField()
     is_paid = models.BooleanField(default=False)
     is_served = models.BooleanField(default=False)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        if not self.order_id:
+            now = timezone.now()
+            date_str = now.strftime("%Y%m%d")  # format: YYYYMMDD
+            time_str = now.strftime("%H%M%S")  # format: HHMMSS
+            rand_str = str(hash(self))[-4:]  # last 4 digits of hash value
+            self.order_id = f"{date_str}{time_str}-{rand_str}"
+        super().save(*args, **kwargs)
 
     class Meta:
         ordering = ["-id"]

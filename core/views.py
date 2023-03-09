@@ -340,7 +340,7 @@ class ResarvationDetailView(RetrieveUpdateDestroyAPIView):
 class ReviewListCreateView(ListCreateAPIView):
     queryset = Review.objects.all()
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ["user__email"]
+    filterset_fields = ["user__email", "menu"]
     ordering_fields = ["rating", "created_at"]
 
     def perform_create(self, serializer):
@@ -363,7 +363,7 @@ class ReviewListCreateView(ListCreateAPIView):
 
 class ReviewDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = ReviewSerializer
-    queryset = Resarvation.objects.all()
+    queryset = Review.objects.all()
     permission_classes = [IsOwner]
 
 
