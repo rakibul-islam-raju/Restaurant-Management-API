@@ -1,7 +1,6 @@
 from django.urls import path
 
 from core.views import (
-    SummaryStatistics,
     CategoryListCreateView,
     CategoryDetailView,
     MenuListCreateView,
@@ -23,11 +22,21 @@ from core.views import (
     SubscribtionDetailView,
 )
 
+from core.statistics.views import (
+    SummaryStatistics,
+    OrderStatisticsView,
+    DailyServedOrderView,
+)
+
 app_name = "core"
 
 urlpatterns = [
-    # stats
+    # statistics
     path("statistics/summary", SummaryStatistics.as_view(), name="statistics-summary"),
+    path("statistics/orders", OrderStatisticsView.as_view(), name="order-statistics"),
+    path(
+        "statistics/orders/served", DailyServedOrderView.as_view(), name="order-served"
+    ),
     # categories
     path("categories", CategoryListCreateView.as_view(), name="categories"),
     path("categories/<pk>", CategoryDetailView.as_view(), name="category-details"),

@@ -88,10 +88,8 @@ class Order(BaseModel):
     order_id = models.CharField(
         max_length=100,
         unique=True,
-        editable=False,
         blank=True,
         null=False,
-        db_index=True,
     )
     total_price = models.FloatField()
     tax = models.FloatField()
@@ -105,8 +103,7 @@ class Order(BaseModel):
             now = timezone.now()
             date_str = now.strftime("%Y%m%d")  # format: YYYYMMDD
             time_str = now.strftime("%H%M%S")  # format: HHMMSS
-            rand_str = str(hash(self))[-4:]  # last 4 digits of hash value
-            self.order_id = f"{date_str}{time_str}-{rand_str}"
+            self.order_id = f"{date_str}{time_str}"
         super().save(*args, **kwargs)
 
     class Meta:

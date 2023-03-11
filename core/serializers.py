@@ -137,7 +137,13 @@ class ContactSerializer(serializers.ModelSerializer):
 class OrderCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = "__all__"
+        fields = [
+            "total_price",
+            "tax",
+            "is_paid",
+            "is_served",
+            "user",
+        ]
 
 
 class OrderSerializer(serializers.ModelSerializer):
