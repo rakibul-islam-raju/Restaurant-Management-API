@@ -301,7 +301,7 @@ class ResarvationListCreateView(ListCreateAPIView):
         if self.request.method == "POST":
             self.permission_classes = [IsAuthenticated]
         else:
-            self.permission_classes = [IsAdminUser, IsOwner]
+            self.permission_classes = [IsStaffOrOwnerAuthenticated]
 
         return super(ResarvationListCreateView, self).get_permissions()
 
